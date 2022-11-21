@@ -1,16 +1,15 @@
-import {AddressType, AuthMethodType, ClientSocketState, CommandReplyType, CommandType} from "./constants.js";
-import {Command, CommandReply} from './command.js'
-import {EventEmitter} from 'events';
 import * as net from 'net';
 import {inspect} from "util";
 import {DnsCache} from "./dnscache.js";
+import {Command, CommandReply} from './command.js'
+import {AddressType, AuthMethodType, ClientSocketState, CommandReplyType, CommandType} from "./constants.js";
 
-export class Socks5Server extends EventEmitter{
+export class Socks5Server/* extends EventEmitter*/{
     private tcpServer: net.Server;
     private acceptAuthMethod: AuthMethodType;
 
     constructor(port: number, hostname: string) {
-        super();
+        /*super();*/
         this.acceptAuthMethod = AuthMethodType.NoAuth; // only NoAuth
 
         this.tcpServer = net.createServer((clientSocket:net.Socket) => {
@@ -41,6 +40,8 @@ export class Socks5Server extends EventEmitter{
                         break;
                     case ClientSocketState.DataTransmission:
                         console.log(`Data transfer begins`);
+                        // remove data event listeners
+                        // clientSocket.removeAllListeners('data');
                         break;
                     default:
                         console.log(`UnHandle data: ${inspect(data)}`);
@@ -102,7 +103,7 @@ export class Socks5Server extends EventEmitter{
         let commandReply: CommandReply;
         let isCommandSucceeded: boolean = true;
 
-        // error command type
+        // Non-existent command type
         if (!Object.values(CommandType).includes(cmd.commandType)) {
             console.error(`Error command type [${cmd.commandType}] from ${socket.remoteAddress}:${socket.remotePort}`);
             socket.end();
@@ -177,4 +178,3 @@ export class Socks5Server extends EventEmitter{
         return isCommandSucceeded;
     }
 }
-

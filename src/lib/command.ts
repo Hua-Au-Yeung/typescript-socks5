@@ -86,7 +86,6 @@ export class Command {
 }
 
 
-        return ['', 0];
     }
 }
 
