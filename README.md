@@ -11,9 +11,9 @@ $ npm build
 - [x] Support IPv6
 - [x] Support Connect command
 - [x] Support DNS query cache
+- [x] Support Udp Associate
 - [ ] Support Username/Password authentication
 - [ ] Support Bind command
-- [ ] Support Udp Associate
 - [ ] Socks5 client
 
 

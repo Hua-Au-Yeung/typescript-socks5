@@ -4,4 +4,4 @@ process.on('uncaughtException', function (err) {
     console.error(err);
 });
 
-const server = new Socks5Server(2211, 'localhost');
+const server = new Socks5Server(2211, '127.0.0.1');

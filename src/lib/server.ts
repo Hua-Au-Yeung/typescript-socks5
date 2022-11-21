@@ -3,13 +3,13 @@ import {inspect} from "util";
 import {DnsCache} from "./dnscache.js";
 import {Command, CommandReply} from './command.js'
 import {AddressType, AuthMethodType, ClientSocketState, CommandReplyType, CommandType} from "./constants.js";
+import {UdpAssociate} from './udpassociate.js';
 
-export class Socks5Server/* extends EventEmitter*/{
+export class Socks5Server {
     private tcpServer: net.Server;
     private acceptAuthMethod: AuthMethodType;
 
     constructor(port: number, hostname: string) {
-        /*super();*/
         this.acceptAuthMethod = AuthMethodType.NoAuth; // only NoAuth
 
         this.tcpServer = net.createServer((clientSocket:net.Socket) => {
@@ -156,9 +156,12 @@ export class Socks5Server/* extends EventEmitter*/{
                     });
 
                     break;
-                case CommandType.Bind:
-                // TODO
                 case CommandType.UdpAssociate:
+                    console.log(`Udp Associate command received`);
+                    const udpAssociate = new UdpAssociate(socket);
+                    udpAssociate.generateLocalListener();
+                    break;
+                case CommandType.Bind:
                 // TODO
                 default:
                     commandReply = new CommandReply(

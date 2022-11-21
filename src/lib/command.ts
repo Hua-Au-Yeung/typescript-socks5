@@ -85,7 +85,34 @@ export class Command {
     }
 }
 
+export class UdpAssociateCommand {
+    public static parseCommand(chunk: Buffer): [boolean, AddressType, string, number, Buffer] {
+        // TODO check if data is valid
+        const rsv: number = chunk.readUInt16BE(0);
+        const frag: number = chunk.readUint8(2);
+        const addressType: AddressType = chunk.readUint8(3) as AddressType;
+        const [host, port] = parseAddress(chunk);
+        const dataLength = chunk.length - 6 -
+            (addressType == AddressType.IPv4 ? 4 : (AddressType.IPv6 ? 16 : host.length));
+        const dataStartIndex: number = addressType == AddressType.IPv4 ? 10 : (AddressType.IPv6 ? 22 : (6 + host.length));
 
+        let data = Buffer.alloc(dataLength);
+        chunk.copy(data, 0, dataStartIndex);
+
+        return [true, addressType, host, port, data];
+    }
+
+    public static generateCommandReplyHeader(addressType: AddressType, address: string, port: number): Buffer {
+        const replyBufferLength = 6
+            + (addressType == AddressType.IPv4 ? 4 : (AddressType.IPv6 ? 16 : address.length));
+        let reply = Buffer.alloc(replyBufferLength);
+        reply.writeUInt16BE(0, 0);
+        reply.writeUint8(0, 2);
+        reply.writeUint8(addressType, 3);
+        const nextOffset: number = host2Buffer(reply, address);
+        reply.writeUInt16BE(port, nextOffset);
+
+        return reply;
     }
 }
 
