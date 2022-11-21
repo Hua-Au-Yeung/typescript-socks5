@@ -3,20 +3,15 @@ import {Command, CommandReply} from './command.js'
 import {EventEmitter} from 'events';
 import * as net from 'net';
 import {inspect} from "util";
-// @ts-ignore
-import dnsSync from 'dns-sync';
-// @ts-ignore
-import Memcache from 'mem-cache';
+import {DnsCache} from "./dnscache.js";
 
 export class Socks5Server extends EventEmitter{
     private tcpServer: net.Server;
     private acceptAuthMethod: AuthMethodType;
-    private mcache: Memcache;
 
     constructor(port: number, hostname: string) {
         super();
         this.acceptAuthMethod = AuthMethodType.NoAuth; // only NoAuth
-        this.mcache = new Memcache();
 
         this.tcpServer = net.createServer((clientSocket:net.Socket) => {
             let clientStats = ClientSocketState.connected;
@@ -115,7 +110,7 @@ export class Socks5Server extends EventEmitter{
 
         switch (cmd.addressType) {
             case AddressType.Domain:
-                const dnsResolveRecord = this.dnsQuery(cmd.host);
+                const dnsResolveRecord = DnsCache.dnsQuery(cmd.host);
                 // resole domain name & no record found
                 if (!dnsResolveRecord) {
                     commandReply = new CommandReply(
@@ -180,22 +175,6 @@ export class Socks5Server extends EventEmitter{
             socket.write(replyBuffer);
         }
         return isCommandSucceeded;
-    }
-
-    // query and cache dns lookup record for 60 * 10 seconds
-    private dnsQuery(domain: string): string {
-        const key = `D:${domain}`;
-        let value = this.mcache.get(key);
-        if (!value) {
-            value = dnsSync.resolve(domain);
-        }
-
-        if (value == null) {
-            return '';
-        } else {
-            this.mcache.set(key, value, 60 * 10);
-            return value;
-        }
     }
 }
 
