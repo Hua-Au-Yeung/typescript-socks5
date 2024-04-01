@@ -1,9 +1,9 @@
 import * as net from 'net';
 import {inspect} from "util";
-import {DnsCache} from "./dnscache.js";
-import {Command, CommandReply} from './command.js'
-import {AddressType, AuthMethodType, ClientSocketState, CommandReplyType, CommandType} from "./constants.js";
-import {UdpAssociate} from './udpassociate.js';
+import {DnsCache} from "./dnscache";
+import {Command, CommandReply} from './command'
+import {AddressType, AuthMethodType, ClientSocketState, CommandReplyType, CommandType} from "./constants";
+import {UdpAssociate} from './udpassociate';
 
 export class Socks5Server {
     private tcpServer: net.Server;
@@ -172,7 +172,6 @@ export class Socks5Server {
             }
         }
 
-        // @ts-ignore
         if (commandReply != undefined) {
             const replyBuffer: Buffer = commandReply.generateBuffer();
             console.log(inspect(replyBuffer));

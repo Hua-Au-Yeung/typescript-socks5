@@ -1,22 +1,29 @@
 {
-  "name": "Typescript socks5",
-  "version": "1.0.0",
+  "name": "typescript-socks5",
+  "version": "1.0.1",
   "description": "Typescript implement socks5 server and client",
-  "type": "module",
-  "module": "es6",
+  "type": "commonjs",
   "scripts": {
-    "build": "npm install && npx tsc -p tsconfig.json"
+    "test": "echo 'Error: no test specified' && exit 1",
+    "build": "npm install && npx tsc -p tsconfig.json",
+    "dev-test": "cross-env NODE_ENV=develop npx nodemon -x ts-node ./src/server_test.ts",
+    "prod-test": "cross-env NODE_ENV=production node ./build/server_test.js"
   },
-  "keywords": ["socks5", "typescript"],
+  "keywords": [
+    "socks5",
+    "typescript"
+  ],
   "author": "Huazai",
   "license": "MIT",
   "dependencies": {
     "dns-sync": "^0.2.1",
-    "ipaddr.js": "^2.0.1",
+    "ipaddr.js": "^2.1.0",
     "mem-cache": "^0.0.5"
   },
   "devDependencies": {
-    "@types/node": "^18.11.9",
-    "typescript": "^4.9.3"
+    "@types/node": "^18.19.28",
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.0",
+    "typescript": "^4.9.5"
   }
 }

@@ -1,6 +1,4 @@
-// @ts-ignore
 import dnsSync from 'dns-sync';
-// @ts-ignore
 import MemCache from 'mem-cache';
 
 export class DnsCache {

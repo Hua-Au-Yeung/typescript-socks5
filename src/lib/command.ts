@@ -1,4 +1,4 @@
-import {AddressType, CommandReplyType, CommandType} from "./constants.js";
+import {AddressType, CommandReplyType, CommandType} from "./constants";
 import ipaddr from 'ipaddr.js';
 
 function parseAddress(chunk: Buffer):[string, number] {
