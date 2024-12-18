@@ -1,9 +1,9 @@
 import dgram from 'dgram';
 import * as net from 'net';
-import {inspect} from "util";
-import {AddressType, CommandReplyType} from "./constants";
-import {CommandReply, UdpAssociateCommand} from './command'
-import {DnsCache} from "./dnscache";
+import { inspect } from 'util';
+import { CommandReply, UdpAssociateCommand } from './command';
+import { AddressType, CommandReplyType } from './constants';
+import { DnsCache } from './dnscache';
 
 // TODO local udp socks5 timeout
 
@@ -14,16 +14,18 @@ export class UdpAssociate {
     public localListenerAddress: string = '';
     public localListenerPort: number = 0;
     constructor(
-        private mainSocket: net.Socket
+        private mainSocket: net.Socket,
     ) {
         this.mainSocketAddressInfo = this.mainSocket.address();
     }
 
-    public generateLocalListener():void {
-        this.localListener = this.mainSocketAddressInfo["family"] == 'IPv4' ?
-            dgram.createSocket("udp4") : dgram.createSocket("udp6");
-        this.localListenerAddressType = this.mainSocketAddressInfo["family"] == 'IPv4' ?
-            AddressType.IPv4 : AddressType.IPv6;
+    public generateLocalListener(): void {
+        this.localListener = this.mainSocketAddressInfo['family'] == 'IPv4'
+            ? dgram.createSocket('udp4')
+            : dgram.createSocket('udp6');
+        this.localListenerAddressType = this.mainSocketAddressInfo['family'] == 'IPv4'
+            ? AddressType.IPv4
+            : AddressType.IPv6;
 
         this.localListener.on('listening', () => {
             this.localListenerAddress = this.localListener.address().address;
@@ -31,7 +33,9 @@ export class UdpAssociate {
 
             const commandReply: CommandReply = new CommandReply(
                 CommandReplyType.Succeeded,
-                this.localListenerAddressType, this.localListenerAddress, this.localListenerPort
+                this.localListenerAddressType,
+                this.localListenerAddress,
+                this.localListenerPort,
             );
             const replyBuffer: Buffer = commandReply.generateBuffer();
             this.mainSocket.write(replyBuffer);
@@ -53,10 +57,12 @@ export class UdpAssociate {
                 // console.log(`Received Remote: ${inspect(msg)}`);
                 this.localListener.send(
                     Buffer.concat([udpAssociateReplyHeader, msg]),
-                    clientAddressInfo.port, clientAddressInfo.address,
+                    clientAddressInfo.port,
+                    clientAddressInfo.address,
                     (error) => {
                         // TODO
-                    });
+                    },
+                );
             });
 
             remoteSocket.on('close', () => {
@@ -65,8 +71,8 @@ export class UdpAssociate {
             });
 
             remoteSocket.on('error', () => {
-               this.mainSocket.end();
-               this.localListener.close();
+                this.mainSocket.end();
+                this.localListener.close();
             });
 
             remoteSocket.send(data, remotePort, remoteHost, (error) => {
@@ -76,12 +82,12 @@ export class UdpAssociate {
 
         this.localListener.on('close', () => {
             this.mainSocket.end();
-        })
-
-        this.localListener.on('error', () => {
-           this.mainSocket.end();
         });
 
-        this.localListener.bind(0, this.mainSocketAddressInfo["address"]);
+        this.localListener.on('error', () => {
+            this.mainSocket.end();
+        });
+
+        this.localListener.bind(0, this.mainSocketAddressInfo['address']);
     }
 }

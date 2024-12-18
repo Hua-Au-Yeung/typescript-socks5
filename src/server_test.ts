@@ -1,6 +1,6 @@
-import {Socks5Server} from "./lib/server";
+import { Socks5Server } from './lib/server.js';
 
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', function(err) {
     console.error(err);
 });
 

@@ -1,0 +1,26 @@
+{
+  "extends": [
+    "https://raw.githubusercontent.com/Hua-Au-Yeung/config/refs/heads/master/dprint/typescript.json"
+  ],
+  "lineWidth": 160,
+  "indentWidth": 4,
+  "useTabs": false,
+  "newLineKind": "lf",
+  "markdown": {
+  },
+  "yaml": {
+    "indentWidth": 2
+  },
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json",
+    "**/*-lock.yaml",
+    "/.idea/*"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.93.2.wasm",
+    "https://plugins.dprint.dev/json-0.19.4.wasm",
+    "https://plugins.dprint.dev/markdown-0.17.8.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.0.wasm"
+  ]
+}

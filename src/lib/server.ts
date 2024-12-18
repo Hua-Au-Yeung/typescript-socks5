@@ -1,9 +1,9 @@
 import * as net from 'net';
-import {inspect} from "util";
-import {DnsCache} from "./dnscache";
-import {Command, CommandReply} from './command'
-import {AddressType, AuthMethodType, ClientSocketState, CommandReplyType, CommandType} from "./constants";
-import {UdpAssociate} from './udpassociate';
+import { inspect } from 'util';
+import { Command, CommandReply } from './command.js';
+import { AddressType, AuthMethodType, ClientSocketState, CommandReplyType, CommandType } from './constants.js';
+import { DnsCache } from './dnscache.js';
+import { UdpAssociate } from './udpassociate.js';
 
 export class Socks5Server {
     private tcpServer: net.Server;
@@ -12,7 +12,7 @@ export class Socks5Server {
     constructor(port: number, hostname: string) {
         this.acceptAuthMethod = AuthMethodType.NoAuth; // only NoAuth
 
-        this.tcpServer = net.createServer((clientSocket:net.Socket) => {
+        this.tcpServer = net.createServer((clientSocket: net.Socket) => {
             let clientStats = ClientSocketState.connected;
             console.log(`Connect from ${clientSocket.remoteAddress}:${clientSocket.remotePort}`);
 
@@ -53,7 +53,7 @@ export class Socks5Server {
                 console.log(`client ${clientSocket.remoteAddress}:${clientSocket.remotePort} closed`);
             });
 
-            clientSocket.on('error', (error:Error) => {
+            clientSocket.on('error', (error: Error) => {
                 switch (error.message) {
                     case 'read ECONNRESET':
                         break;
@@ -76,7 +76,7 @@ export class Socks5Server {
         const numOfMethods = chunk.readUint8(1);
         const methods = [];
 
-        for(let i = 0; i < numOfMethods; i++) {
+        for (let i = 0; i < numOfMethods; i++) {
             methods.push(chunk.readUint8(i + 2));
         }
 
@@ -85,7 +85,7 @@ export class Socks5Server {
 
         const buffer = Buffer.alloc(2);
         buffer.writeUint8(5, 0);
-        if(methods.indexOf(this.acceptAuthMethod) !== -1) {
+        if (methods.indexOf(this.acceptAuthMethod) !== -1) {
             buffer.writeUint8(this.acceptAuthMethod, 1);
             socket.write(buffer);
             return true;
@@ -98,9 +98,9 @@ export class Socks5Server {
 
     private processCmd(socket: net.Socket, chunk: Buffer): Boolean {
         const cmd = new Command(chunk);
-        let readyToConnectRemoteHost:string = cmd.host,
-            readyToConnectRemotePort:number = cmd.port;
-        let commandReply: CommandReply;
+        let readyToConnectRemoteHost: string = cmd.host,
+            readyToConnectRemotePort: number = cmd.port;
+        let commandReply: CommandReply | undefined = undefined;
         let isCommandSucceeded: boolean = true;
 
         // Non-existent command type
@@ -116,7 +116,9 @@ export class Socks5Server {
                 if (!dnsResolveRecord) {
                     commandReply = new CommandReply(
                         CommandReplyType.HostUnreachable,
-                        AddressType.Domain, cmd.host, cmd.port
+                        AddressType.Domain,
+                        cmd.host,
+                        cmd.port,
                     );
                     isCommandSucceeded = false;
                 } else {
@@ -130,7 +132,9 @@ export class Socks5Server {
             default:
                 commandReply = new CommandReply(
                     CommandReplyType.AddressTypeNotSupported,
-                    cmd.addressType, cmd.host, cmd.port
+                    cmd.addressType,
+                    cmd.host,
+                    cmd.port,
                 );
                 isCommandSucceeded = false;
         }
@@ -144,7 +148,9 @@ export class Socks5Server {
                     remoteSocket.connect(readyToConnectRemotePort, readyToConnectRemoteHost, () => {
                         const commandReply2: CommandReply = new CommandReply(
                             CommandReplyType.Succeeded,
-                            cmd.addressType, readyToConnectRemoteHost, readyToConnectRemotePort
+                            cmd.addressType,
+                            readyToConnectRemoteHost,
+                            readyToConnectRemotePort,
                         );
                         const replyBuffer: Buffer = commandReply2.generateBuffer();
                         socket.write(replyBuffer);
@@ -166,7 +172,9 @@ export class Socks5Server {
                 default:
                     commandReply = new CommandReply(
                         CommandReplyType.CommandNotSupported,
-                        cmd.addressType, cmd.host, cmd.port
+                        cmd.addressType,
+                        cmd.host,
+                        cmd.port,
                     );
                     isCommandSucceeded = false;
             }

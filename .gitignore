@@ -4,4 +4,4 @@ Thumbs.db
 
 *.js
 node_modules/
-wz/
+dist/

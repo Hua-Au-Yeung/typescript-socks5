@@ -1,18 +1,27 @@
 {
   "compilerOptions": {
+    "strict": true,
     "target": "ESNext",
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "./build",
-    "esModuleInterop": true, // import commonjs package
-    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true, // import commonjs package, import * as ...
+    "forceConsistentCasingInFileNames": true, // case of the file name
     "typeRoots": [
       "./node_modules/@types",
-    ]
+      "./src/@types"
+    ],
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@root/*": ["./*"]
+    }
   },
   "include": [
     "./src/**/*",
+    "./src/@types/**/*"
   ],
-  "ts-node": {
-    "files": true
-  },
+  "files": [
+    "./src/@types/global.d.ts"
+  ]
 }

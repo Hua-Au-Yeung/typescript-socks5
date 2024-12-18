@@ -1,3 +1,4 @@
+// @ts-ignore
 import dnsSync from 'dns-sync';
 import MemCache from 'mem-cache';
 

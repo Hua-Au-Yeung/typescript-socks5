@@ -1,7 +1,7 @@
-import {AddressType, CommandReplyType, CommandType} from "./constants";
 import ipaddr from 'ipaddr.js';
+import { AddressType, CommandReplyType, CommandType } from './constants.js';
 
-function parseAddress(chunk: Buffer):[string, number] {
+function parseAddress(chunk: Buffer): [string, number] {
     let address = [], port;
     const addressType = chunk.readUint8(3);
 
@@ -15,15 +15,15 @@ function parseAddress(chunk: Buffer):[string, number] {
             return [address.join('.'), port];
         case AddressType.Domain:
             const domainLength: number = chunk.readUint8(4);
-            let i:number;
-            for(i = 5; i < 5 + domainLength; i++) {
+            let i: number;
+            for (i = 5; i < 5 + domainLength; i++) {
                 address.push(String.fromCharCode(chunk.readUint8(i)));
             }
             port = chunk.readUInt16BE(i);
             return [address.join(''), port];
         case AddressType.IPv6:
             let byteArray: number[] = [];
-            for(let i = 4; i < 20; i++) {
+            for (let i = 4; i < 20; i++) {
                 byteArray.push(chunk.readUint8(i));
             }
             const ipv6Addr = ipaddr.fromByteArray(byteArray);
@@ -92,8 +92,8 @@ export class UdpAssociateCommand {
         const frag: number = chunk.readUint8(2);
         const addressType: AddressType = chunk.readUint8(3) as AddressType;
         const [host, port] = parseAddress(chunk);
-        const dataLength = chunk.length - 6 -
-            (addressType == AddressType.IPv4 ? 4 : (AddressType.IPv6 ? 16 : host.length));
+        const dataLength = chunk.length - 6
+            - (addressType == AddressType.IPv4 ? 4 : (AddressType.IPv6 ? 16 : host.length));
         const dataStartIndex: number = addressType == AddressType.IPv4 ? 10 : (AddressType.IPv6 ? 22 : (6 + host.length));
 
         let data = Buffer.alloc(dataLength);
@@ -117,12 +117,12 @@ export class UdpAssociateCommand {
 }
 
 export class CommandReply {
-    private bufferLength:number = -1;
+    private bufferLength: number = -1;
     constructor(
         private commandReplyType: CommandReplyType,
         private addressType: AddressType,
         private host: string,
-        private port: number
+        private port: number,
     ) {
         switch (this.addressType) {
             case AddressType.IPv4:
