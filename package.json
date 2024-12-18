@@ -18,15 +18,15 @@
   "license": "MIT",
   "dependencies": {
     "dns-sync": "^0.2.1",
-    "ipaddr.js": "^2.1.0",
+    "ipaddr.js": "^2.2.0",
     "mem-cache": "^0.0.5"
   },
   "devDependencies": {
     "@types/mem-cache": "^1.0.4",
-    "@types/node": "^18.19.28",
+    "@types/node": "^22.10.2",
     "cross-env": "^7.0.3",
-    "tsup": "^8.3.0",
-    "tsx": "^4.19.1",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
     "typescript": "^4.9.5"
   }
 }
